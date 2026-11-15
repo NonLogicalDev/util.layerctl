@@ -13,6 +13,14 @@ go install ./cmd/layerctl
 
 Run the installed `layerctl` from the root or a subdirectory of the repository containing the layer definitions. `go install` places it in `GOBIN`, or `$(go env GOPATH)/bin` when `GOBIN` is unset.
 
+## Nix
+
+Build the pinned package with `nix build` or run it with `nix run . -- --version`. The flake exposes `packages.<system>.layerctl` and a default package for Linux and macOS on x86-64 and ARM64. The flake pins nixpkgs 26.05 because newer nixpkgs has dropped x86-64 macOS support. The package expression in `nix/package.nix` uses `buildGoModule` and accepts a `source` override, so it can be adapted for nixpkgs with a fixed upstream release and source hash.
+
+## Releases
+
+`layerctl --version` prints the version and source commit embedded in the executable. Local Go builds report `0.0.0-dev` and the Git revision recorded by Go when available, with `-dirty` for uncommitted changes; linker flags can override both values. Prepare a dated section for the version in [CHANGELOG.md](CHANGELOG.md) before tagging. Pushing a semantic version tag such as `v1.2.3` runs the release workflow, which uses that section as its release notes, tests the project, and publishes GoReleaser archives and checksums for Linux and macOS on x86-64 and ARM64. No tag or release is created by an ordinary push to `main`.
+
 ## Composition
 
 A definition repository contains ordered `layers/NNNN-slug/layer.toml` files. Each layer runs its operations in order and creates one commit in the composed workspace. `git-clone` imports a source tree and makes its selected source commit a parent of that layer's commit; the preceding workspace commit is the first parent when present. Source Git metadata is not copied into the workspace tree.
