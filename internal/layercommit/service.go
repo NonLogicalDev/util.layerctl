@@ -12,10 +12,10 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/commitauthors"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/gitrepo"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/operations"
+	"github.com/NonLogicalDev/util.layerctl/internal/commitauthors"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/gitrepo"
+	"github.com/NonLogicalDev/util.layerctl/internal/operations"
 )
 
 // Service captures, applies, and verifies generated layer commits.

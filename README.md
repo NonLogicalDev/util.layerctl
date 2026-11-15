@@ -4,7 +4,7 @@
 
 ## Build and test
 
-Go 1.26 and Git are required. From this directory:
+Go 1.26 and Git are required. From a checkout of this repository:
 
 ```sh
 go test ./...

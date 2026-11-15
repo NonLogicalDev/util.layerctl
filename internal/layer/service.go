@@ -14,10 +14,10 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/gitrepo"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/layercommit"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/projection"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/gitrepo"
+	"github.com/NonLogicalDev/util.layerctl/internal/layercommit"
+	"github.com/NonLogicalDev/util.layerctl/internal/projection"
 )
 
 // Service owns updates to the canonical layers directory.

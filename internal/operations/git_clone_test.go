@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/operations"
+	"github.com/NonLogicalDev/util.layerctl/internal/operations"
 )
 
 func git(t *testing.T, dir string, args ...string) string {

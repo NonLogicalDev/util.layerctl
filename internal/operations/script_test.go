@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/operations"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/operations"
 )
 
 func runGit(t *testing.T, dir string, args ...string) string {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
 )
 
 var trailerLine = regexp.MustCompile(`^[A-Za-z0-9-]+:[\t ]*.*$`)

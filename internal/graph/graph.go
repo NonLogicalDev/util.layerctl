@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
 )
 
 // Write renders dependency edges from prerequisite to dependent. When a layer

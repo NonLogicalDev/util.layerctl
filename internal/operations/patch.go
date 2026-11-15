@@ -5,8 +5,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/gitrepo"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/gitrepo"
 )
 
 // ApplyPatchOverlay stages a patch or additive overlay.

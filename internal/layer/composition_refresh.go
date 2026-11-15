@@ -16,10 +16,10 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/commitauthors"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/gitrepo"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/projection"
+	"github.com/NonLogicalDev/util.layerctl/internal/commitauthors"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/gitrepo"
+	"github.com/NonLogicalDev/util.layerctl/internal/projection"
 )
 
 // RefreshComposition retains a manifest layer's complete operation list and

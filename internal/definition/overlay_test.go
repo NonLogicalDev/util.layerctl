@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
 )
 
 func TestLoad_overlayPreservesBlobKinds(t *testing.T) {

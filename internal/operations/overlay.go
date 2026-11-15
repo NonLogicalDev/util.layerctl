@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/gitrepo"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/gitrepo"
 )
 
 // OverlayCollisionError requires an operator to reconcile newly inherited

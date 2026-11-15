@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/graph"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/graph"
 )
 
 func TestWriteGraphShowsDependenciesAndDisabledLayers(t *testing.T) {

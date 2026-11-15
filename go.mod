@@ -1,5 +1,5 @@
 // Modified from abg-OAI/codex: module import path changed for this extraction.
-module github.com/NonLogicalDev/misc.experiments/utils/layerctl
+module github.com/NonLogicalDev/util.layerctl
 
 go 1.26
 

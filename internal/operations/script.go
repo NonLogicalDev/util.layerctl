@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
 )
 
 // RunScript executes the script directly with operation args; operationIndex is

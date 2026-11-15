@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/projection"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/projection"
 )
 
 func TestCompositionPreCheckoutScriptFailureWithConflictsIsUncertain(t *testing.T) {

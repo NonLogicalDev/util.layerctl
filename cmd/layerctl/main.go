@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/cli"
+	"github.com/NonLogicalDev/util.layerctl/internal/cli"
 )
 
 func main() {

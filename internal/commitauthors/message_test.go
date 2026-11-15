@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/commitauthors"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/commitauthors"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
 )
 
 func TestNoCoAuthorsPreservesExactBytes(t *testing.T) {

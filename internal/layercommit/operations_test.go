@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/gitrepo"
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/layercommit"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/gitrepo"
+	"github.com/NonLogicalDev/util.layerctl/internal/layercommit"
 )
 
 // Each patch is a real binary-safe Git diff between successive committed trees.

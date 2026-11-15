@@ -1,7 +1,7 @@
 package layer
 
 import (
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/definition"
+	"github.com/NonLogicalDev/util.layerctl/internal/definition"
 	"os"
 	"path/filepath"
 	"slices"

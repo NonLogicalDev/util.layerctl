@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/NonLogicalDev/misc.experiments/utils/layerctl/internal/gitrepo"
+	"github.com/NonLogicalDev/util.layerctl/internal/gitrepo"
 )
 
 // DiffTrees returns a binary-safe patch between two Git trees.
