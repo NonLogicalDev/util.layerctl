@@ -6,12 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-17
+
 ### Added
 
-- Compose Git repositories and ordered patch, overlay, and script operations into projection workspaces.
-- Inspect layer dependencies and capture or refresh changes from a projection.
+- Compose one or more Git repositories with ordered clone, patch, overlay, and script operations into Git projection workspaces.
+- Preserve imported repository history as merge parents and prepare source trees with pre-checkout hooks.
+- Define layer dependencies and commit metadata in TOML, render DOT or Mermaid graphs, and capture or refresh changes from a projection.
 - Build and run Layerctl with Nix on supported Linux and macOS systems.
 - Report the executable's embedded version and commit with `layerctl --version`.
 - Publish versioned archives and checksums with GoReleaser when a release tag is pushed.
 
-[Unreleased]: https://github.com/NonLogicalDev/util.layerctl/commits/main
+### Changed
+
+- Require manifest-based layers; the original `upstream.json` format and its migration commands are not supported.
+
+[Unreleased]: https://github.com/NonLogicalDev/util.layerctl/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/NonLogicalDev/util.layerctl/releases/tag/v0.1.0

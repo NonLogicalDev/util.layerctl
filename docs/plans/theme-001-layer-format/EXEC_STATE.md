@@ -29,3 +29,5 @@ Completed: [pre-checkout script and optional clone directory](completed/plan-03%
 Completed: [align script working directories](completed/plan-04%20Align%20script%20working%20directories.md). Both scripts use the composed workspace root; the clone hook retains its bare Git context.
 
 - 2026-11-13: /root completed: removed legacy formats and commands; full Go suite and CLI smoke passed. See the active plan.
+
+- 2026-11-17: /root active: publish and verify the first versioned GitHub release; see [release plan](active/plan-05%20Publish%20first%20release.md).

@@ -2,6 +2,16 @@
 
 `layerctl` manages ordered Git patch layers and materializes them as projection worktrees. This is a standalone extraction of the tool from [abg-OAI/codex](https://github.com/abg-OAI/codex), at commit [`a780a437d8a29c0cb76067d4f540c0a03c301a3d`](https://github.com/abg-OAI/codex/commit/a780a437d8a29c0cb76067d4f540c0a03c301a3d). This copy changes the module path and adds manifest-defined operations and repository composition. The upstream project is copyright OpenAI and distributed under the [Apache License 2.0](LICENSE).
 
+## Install
+
+Download a prebuilt archive and checksums from [GitHub Releases](https://github.com/NonLogicalDev/util.layerctl/releases), or install the tagged version with Go 1.26 or newer:
+
+```sh
+go install github.com/NonLogicalDev/util.layerctl/cmd/layerctl@v0.1.0
+```
+
+Git is required at runtime.
+
 ## Build and test
 
 Go 1.26 and Git are required. From a checkout of this repository:
