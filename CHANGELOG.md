@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-17
+
+### Fixed
+
+- Report the module version for binaries installed with `go install` at a version tag.
+
 ## [0.1.0] - 2026-11-17
 
 ### Added
@@ -21,5 +27,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Require manifest-based layers; the original `upstream.json` format and its migration commands are not supported.
 
-[Unreleased]: https://github.com/NonLogicalDev/util.layerctl/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/NonLogicalDev/util.layerctl/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/NonLogicalDev/util.layerctl/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/NonLogicalDev/util.layerctl/releases/tag/v0.1.0

@@ -8,3 +8,7 @@ Goal: publish a versioned GitHub release for the standalone layerctl repository,
 - The Nix package still reports `0.0.0-unstable-20261114`; align its version with `0.1.0` and document installation from the tag and release assets.
 
 - 2026-11-17: Go tests, release-note tests, GoReleaser configuration and tagged dry run passed. All four archives passed SHA-256 checks; the macOS ARM64 archive reports version and the test commit. Nix flake evaluation passed for all four systems and the native Nix package built as `0.1.0`. An offline Nix build failed because a required source was unavailable; the subsequent cached online build passed. Next: checkpoint, push `main` and `v0.1.0`, and verify the live release.
+
+- 2026-11-17: `v0.1.0` released with four archives and checksums; both release and CI workflows passed. A real `go install ...@v0.1.0` reported `0.0.0-dev (unknown)`. Fix version reporting for module installs without changing embedded release versions; test it, bump Nix and documentation to `v0.1.1`, and publish and verify the patch release. Preserve the published tag.
+
+- 2026-11-17: Patch validation passed: the full Go suite and release-note checks passed, an isolated Go module proxy produced `layerctl 0.1.1 (unknown)` from `go install @v0.1.1`, and the native Nix package built and reported `0.1.1`. Next: checkpoint and push the patch tag, then verify GitHub assets and public Go installation.

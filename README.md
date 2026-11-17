@@ -7,7 +7,7 @@
 Download a prebuilt archive and checksums from [GitHub Releases](https://github.com/NonLogicalDev/util.layerctl/releases), or install the tagged version with Go 1.26 or newer:
 
 ```sh
-go install github.com/NonLogicalDev/util.layerctl/cmd/layerctl@v0.1.0
+go install github.com/NonLogicalDev/util.layerctl/cmd/layerctl@v0.1.1
 ```
 
 Git is required at runtime.
@@ -29,7 +29,7 @@ Build the pinned package with `nix build` or run it with `nix run . -- --version
 
 ## Releases
 
-`layerctl --version` prints the version and source commit embedded in the executable. Local Go builds report `0.0.0-dev` and the Git revision recorded by Go when available, with `-dirty` for uncommitted changes; linker flags can override both values. Prepare a dated section for the version in [CHANGELOG.md](CHANGELOG.md) before tagging. Pushing a semantic version tag such as `v1.2.3` runs the release workflow, which uses that section as its release notes, tests the project, and publishes GoReleaser archives and checksums for Linux and macOS on x86-64 and ARM64. No tag or release is created by an ordinary push to `main`.
+`layerctl --version` prints the version and source commit embedded in the executable. Local Go builds report `0.0.0-dev` and the Git revision recorded by Go when available, with `-dirty` for uncommitted changes. Versioned `go install` builds report their module version; their commit may be `unknown`. Linker flags can override both values. Prepare a dated section for the version in [CHANGELOG.md](CHANGELOG.md) before tagging. Pushing a semantic version tag such as `v1.2.3` runs the release workflow, which uses that section as its release notes, tests the project, and publishes GoReleaser archives and checksums for Linux and macOS on x86-64 and ARM64. No tag or release is created by an ordinary push to `main`.
 
 ## Composition
 
