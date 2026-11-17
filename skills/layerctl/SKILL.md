@@ -42,7 +42,11 @@ file = "scripts/configure.sh"
 args = ["example"]
 ```
 
-Replace the example URL and commit with an accessible source and revision. `ref`, `commit`, `depth`, `depends-on`, and co-authors are optional. Paths for patches, overlays, and scripts are relative to the layer directory. Clone destinations are relative to the workspace; omitting `dir` or setting it to an empty string means its root. A clone does not overwrite existing files. Imported source commits become additional parents of the layer commit; the previous workspace commit is the first parent when present. `ref` and `commit` together require the commit to be reachable from the ref. Pin commits for reproducibility; a depth limit can prevent ancestry verification. Overlapping source histories are rejected when either is shallow, and submodules are not supported.
+Replace the example URL and commit with an accessible source and revision. `ref`, `commit`, `depth`, `depends-on`, and co-authors are optional. Paths for patches, overlays, and scripts are relative to the layer directory. Clone destinations are relative to the workspace; omitting `dir` or setting it to an empty string means its root. A clone does not overwrite existing files. Imported source commits become additional parents of the layer commit; the previous workspace commit is the first parent when present. `ref` and `commit` together require the commit to be reachable from the ref. Pin commits for reproducibility; a depth limit can prevent ancestry verification. Overlapping source histories are rejected when either is shallow.
+
+A clone preserves submodule pins and leaves the submodules uninitialized.
+Layerctl copies `.gitmodules` verbatim to the clone destination.
+Layers can modify sibling files. Editing submodules through layerctl is unsupported.
 
 Layers are enabled by default. Disabled layers are skipped; an enabled layer's dependencies must exist earlier in the numbered order and be enabled. When `depends-on` is omitted, the previous enabled layer is the default dependency. An explicit list replaces that default; `depends-on = []` declares no dependencies. Layers still execute in numbered order. `vcs.co-authors` adds standard `Co-authored-by` trailers. Without co-authors, the exact commit message is retained.
 

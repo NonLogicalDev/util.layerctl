@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Import repositories containing Git submodules with their pins and original
+  `.gitmodules` file. Submodules remain uninitialized.
+
 ## [0.1.1] - 2026-11-17
 
 ### Fixed

@@ -99,7 +99,13 @@ git write-tree
 
 Hooks are trusted programs and may change resources outside the repository. `check` and refresh verification replay them. When a hook returns a commit, make its creation deterministic: refresh checks that imported parent IDs match, so changing commit metadata between runs can make verification fail.
 
-When both `ref` and `commit` are set, the commit must be reachable from the ref. A shallow depth can prevent this verification. Pin `commit` for reproducible results; otherwise the selected ref or default HEAD can move. Git shallow boundaries apply to the entire workspace object database, so overlapping source histories are rejected when either import is shallow. Clone imports refuse to overwrite existing files or index entries, and sources containing Git submodules are not supported. Paths must be workspace-relative and may not traverse symlinks or Git metadata.
+When both `ref` and `commit` are set, the commit must be reachable from the ref. A shallow depth can prevent this verification. Pin `commit` for reproducible results; otherwise the selected ref or default HEAD can move. Git shallow boundaries apply to the entire workspace object database, so overlapping source histories are rejected when either import is shallow. Clone imports refuse conflicting files or index entries. Paths must be workspace-relative and may not traverse symlinks or Git metadata.
+
+A clone preserves each submodule's pinned commit and leaves its directory empty.
+Layerctl copies `.gitmodules` verbatim to the clone destination.
+For nested imports or relative submodule URLs, initializing the submodules with
+Git may require manual configuration in the projection.
+Editing submodules through layerctl is unsupported.
 
 ```sh
 layerctl graph                    # Graphviz DOT on stdout

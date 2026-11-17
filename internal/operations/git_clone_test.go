@@ -2,12 +2,15 @@ package operations_test
 
 import (
 	"context"
+	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/NonLogicalDev/util.layerctl/internal/cli"
 	"github.com/NonLogicalDev/util.layerctl/internal/operations"
 )
 
@@ -193,18 +196,76 @@ func TestImportDoesNotReplaceDeletedButStagedFile(t *testing.T) {
 	}
 }
 
-func TestImportRejectsSubmoduleBeforeWriting(t *testing.T) {
-	src := repo(t)
-	write(t, src, "regular.txt", "regular", 0644)
-	head := commit(t, src, "base")
-	git(t, src, "update-index", "--add", "--cacheinfo", "160000,"+head+",external")
-	git(t, src, "commit", "-qm", "add gitlink")
-	work := repo(t)
-	if _, err := operations.GitClone(context.Background(), work, operations.GitCloneRequest{URL: src, Dir: "copy"}); err == nil || !strings.Contains(err.Error(), "submodule") {
-		t.Fatalf("submodule accepted: %v", err)
+func TestProjectionPreservesUninitializedSubmodules(t *testing.T) {
+	child := repo(t)
+	write(t, child, "library", "child contents", 0644)
+	pin := commit(t, child, "library")
+	source := repo(t)
+	relativeURL, err := filepath.Rel(source, child)
+	if err != nil {
+		t.Fatal(err)
 	}
-	if _, err := os.Stat(filepath.Join(work, "copy")); !os.IsNotExist(err) {
-		t.Fatalf("failed clone created files: %v", err)
+	git(t, source, "-c", "protocol.file.allow=always", "submodule", "add", "--name", "library", filepath.ToSlash(relativeURL), "deps/lib")
+	write(t, source, "sibling", "before\n", 0644)
+	commit(t, source, "superproject")
+	// The child must only be needed when Git is asked to initialize it.
+	offline := filepath.Join(t.TempDir(), "offline")
+	if err := os.Rename(child, offline); err != nil {
+		t.Fatal(err)
+	}
+
+	defs := repo(t)
+	t.Chdir(defs)
+	t.Setenv("GIT_AUTHOR_NAME", "Fixture")
+	t.Setenv("GIT_AUTHOR_EMAIL", "fixture@example.invalid")
+	t.Setenv("GIT_COMMITTER_NAME", "Fixture")
+	t.Setenv("GIT_COMMITTER_EMAIL", "fixture@example.invalid")
+	write(t, defs, "layers/0001-import/layer.toml", fmt.Sprintf(`[vcs]
+commit-msg = "Import sources"
+[[operation]]
+[operation.git-clone]
+url = %q
+[[operation]]
+[operation.git-clone]
+url = %q
+dir = "vendor/source"
+`, source, source), 0644)
+	write(t, defs, "layers/0002-edit/layer.toml", `[vcs]
+commit-msg = "Edit a sibling"
+[[operation]]
+[operation.patch]
+file = "sibling.patch"
+`, 0644)
+	write(t, defs, "layers/0002-edit/sibling.patch", "diff --git a/sibling b/sibling\n--- a/sibling\n+++ b/sibling\n@@ -1 +1 @@\n-before\n+after\n", 0644)
+
+	workspace := filepath.Join(t.TempDir(), "projection")
+	if err := cli.Run(t.Context(), []string{"projection", "create", "demo", "--worktree", workspace}, io.Discard, io.Discard); err != nil {
+		t.Fatal(err)
+	}
+	if err := cli.Run(t.Context(), []string{"check"}, io.Discard, io.Discard); err != nil {
+		t.Fatal(err)
+	}
+	if got := git(t, workspace, "show", "HEAD:sibling"); got != "after" {
+		t.Fatalf("patched sibling = %q", got)
+	}
+	paths := []string{"deps/lib", "vendor/source/deps/lib"}
+	for _, path := range paths {
+		if got := git(t, workspace, "ls-tree", "HEAD", path); got != "160000 commit "+pin+"\t"+path {
+			t.Fatalf("unexpected gitlink: %s", got)
+		}
+		entries, err := os.ReadDir(filepath.Join(workspace, path))
+		if err != nil || len(entries) != 0 {
+			t.Fatalf("uninitialized %s: %v, %v", path, entries, err)
+		}
+	}
+	wantConfig := git(t, source, "rev-parse", "HEAD:.gitmodules")
+	for _, path := range []string{".gitmodules", "vendor/source/.gitmodules"} {
+		if got := git(t, workspace, "rev-parse", "HEAD:"+path); got != wantConfig {
+			t.Fatalf("%s blob = %s, want %s", path, got, wantConfig)
+		}
+	}
+	if got := git(t, workspace, "status", "--porcelain"); got != "" {
+		t.Fatalf("dirty projection: %s", got)
 	}
 }
 
