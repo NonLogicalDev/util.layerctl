@@ -11,7 +11,7 @@
 
 buildGoModule (finalAttrs: {
   pname = "layerctl";
-  version = "0.1.1";
+  version = "0.2.0";
   src = source;
   vendorHash = "sha256-OK7q/CQpa4gNWIPWHZPyew2Ym8NPkXqSDSzE92gYrKk=";
   ldflags = [ "-s" "-w" "-X main.version=${finalAttrs.version}" "-X main.commit=${revision}" ];

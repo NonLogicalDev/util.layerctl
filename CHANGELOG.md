@@ -6,11 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-17
+
 ### Added
 
 - Import repositories containing Git submodules with their pins and original
   `.gitmodules` file. Submodules remain uninitialized.
 - Show usage and available flags with `layerctl --help` and `--help` on subcommands.
+
+### Changed
+
+- Accept command flags before or after positional arguments.
 
 ## [0.1.1] - 2026-11-17
 
@@ -33,6 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Require manifest-based layers; the original `upstream.json` format and its migration commands are not supported.
 
-[Unreleased]: https://github.com/NonLogicalDev/util.layerctl/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/NonLogicalDev/util.layerctl/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/NonLogicalDev/util.layerctl/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/NonLogicalDev/util.layerctl/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/NonLogicalDev/util.layerctl/releases/tag/v0.1.0

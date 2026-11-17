@@ -7,7 +7,7 @@
 Download a prebuilt archive and checksums from [GitHub Releases](https://github.com/NonLogicalDev/util.layerctl/releases), or install the tagged version with Go 1.26 or newer:
 
 ```sh
-go install github.com/NonLogicalDev/util.layerctl/cmd/layerctl@v0.1.1
+go install github.com/NonLogicalDev/util.layerctl/cmd/layerctl@v0.2.0
 ```
 
 Git is required at runtime.
@@ -28,16 +28,19 @@ Run the installed `layerctl` from the root or a subdirectory of the repository c
 With Nix flakes enabled, run the published release without cloning this repository:
 
 ```sh
-nix run github:NonLogicalDev/util.layerctl/v0.1.1 -- --version
+nix run github:NonLogicalDev/util.layerctl/v0.2.0 -- --version
 ```
 
 Run layerctl commands from the Git repository containing your layer definitions. For example:
 
 ```sh
-nix run github:NonLogicalDev/util.layerctl/v0.1.1 -- graph --format mermaid
+nix run github:NonLogicalDev/util.layerctl/v0.2.0 -- graph --format mermaid
 ```
 
-The `v0.1.1` ref pins the release; omit it to run the default branch. From a layerctl checkout, use `nix run . -- --version` or `nix build` to build the package locally.
+The `v0.2.0` ref pins the release.
+Omit it to run the default branch.
+From a layerctl checkout, use `nix run . -- --version` or `nix build`
+to build the package locally.
 
 The flake exposes `packages.<system>.layerctl` and a default package for Linux and macOS on x86-64 and ARM64. It pins nixpkgs 26.05 because newer nixpkgs has dropped x86-64 macOS support. The package expression in `nix/package.nix` uses `buildGoModule` and accepts a `source` override, so it can be adapted for nixpkgs with a fixed upstream release and source hash.
 
