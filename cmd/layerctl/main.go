@@ -9,12 +9,27 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/alecthomas/kong"
+
 	"github.com/NonLogicalDev/util.layerctl/internal/cli"
 )
 
 // Set by release and package builds; local builds remain identifiable.
 var version = "0.0.0-dev"
 var commit = "unknown"
+
+func main() {
+	logger := log.New(os.Stderr, "layerctl: ", 0)
+	if err := cli.Run(context.Background(), os.Args[1:], logger, os.Getwd, versionInfo, kong.Exit(os.Exit)); err != nil {
+		logger.Print(err)
+		os.Exit(1)
+	}
+}
+
+func versionInfo() string {
+	info, _ := debug.ReadBuildInfo()
+	return fmt.Sprintf("%s (%s)", buildVersion(version, info), buildCommit(info))
+}
 
 // A versioned go install records its module version without release linker flags.
 func buildVersion(embedded string, info *debug.BuildInfo) string {
@@ -28,12 +43,8 @@ func buildVersion(embedded string, info *debug.BuildInfo) string {
 }
 
 // Go records VCS metadata for ordinary local builds when the checkout is available.
-func buildCommit() string {
-	if commit != "unknown" {
-		return commit
-	}
-	info, ok := debug.ReadBuildInfo()
-	if !ok {
+func buildCommit(info *debug.BuildInfo) string {
+	if commit != "unknown" || info == nil {
 		return commit
 	}
 	revision, modified := commit, false
@@ -49,17 +60,4 @@ func buildCommit() string {
 		return revision + "-dirty"
 	}
 	return revision
-}
-
-func main() {
-	if len(os.Args) == 2 && (os.Args[1] == "--version" || os.Args[1] == "version") {
-		info, _ := debug.ReadBuildInfo()
-		fmt.Printf("layerctl %s (%s)\n", buildVersion(version, info), buildCommit())
-		return
-	}
-	logger := log.New(os.Stderr, "layerctl: ", 0)
-	if err := cli.Run(context.Background(), os.Args[1:], os.Stdout, os.Stderr); err != nil {
-		logger.Print(err)
-		os.Exit(1)
-	}
 }

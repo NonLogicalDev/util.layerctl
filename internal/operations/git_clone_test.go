@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -239,10 +240,12 @@ file = "sibling.patch"
 	write(t, defs, "layers/0002-edit/sibling.patch", "diff --git a/sibling b/sibling\n--- a/sibling\n+++ b/sibling\n@@ -1 +1 @@\n-before\n+after\n", 0644)
 
 	workspace := filepath.Join(t.TempDir(), "projection")
-	if err := cli.Run(t.Context(), []string{"projection", "create", "demo", "--worktree", workspace}, io.Discard, io.Discard); err != nil {
+	logger := log.New(io.Discard, "", 0)
+	version := func() string { return "test" }
+	if err := cli.Run(t.Context(), []string{"projection", "create", "demo", "--worktree", workspace}, logger, os.Getwd, version); err != nil {
 		t.Fatal(err)
 	}
-	if err := cli.Run(t.Context(), []string{"check"}, io.Discard, io.Discard); err != nil {
+	if err := cli.Run(t.Context(), []string{"check"}, logger, os.Getwd, version); err != nil {
 		t.Fatal(err)
 	}
 	if got := git(t, workspace, "show", "HEAD:sibling"); got != "after" {
