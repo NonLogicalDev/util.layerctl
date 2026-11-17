@@ -21,3 +21,5 @@ Completed Deluge follow-up: use the upstream SynthstromAudible repository as the
 Script operations and clone hooks use the workspace root as their current directory. Clone hooks retain bare Git context and expose `LAYERCTL_GITCLONE_BARE_DIR` and `LAYERCTL_GITCLONE_INDEX_FILE`; see the [completed follow-up](theme-001-layer-format/completed/plan-04%20Align%20script%20working%20directories.md).
 
 2026-11-13: Removed the original `upstream.json` mode, legacy layers and migration command at the user’s request. Old definitions are rejected; incomplete projections made by earlier versions may require recreation. The current Deluge definitions use manifests.
+
+2026-11-17: The standalone repository publishes versioned releases from tag-triggered GitHub Actions. The initial release and Go-install version fix are recorded in the [completed release plan](theme-001-layer-format/completed/plan-05%20Publish%20first%20release.md).

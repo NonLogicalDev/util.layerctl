@@ -30,4 +30,4 @@ Completed: [align script working directories](completed/plan-04%20Align%20script
 
 - 2026-11-13: /root completed: removed legacy formats and commands; full Go suite and CLI smoke passed. See the active plan.
 
-- 2026-11-17: /root active: publish and verify the first versioned GitHub release; see [release plan](active/plan-05%20Publish%20first%20release.md).
+- 2026-11-17: /root completed: published and verified `v0.1.1`, including tag-triggered builds and checksums; see [release plan](completed/plan-05%20Publish%20first%20release.md).
