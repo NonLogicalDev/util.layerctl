@@ -25,7 +25,21 @@ Run the installed `layerctl` from the root or a subdirectory of the repository c
 
 ## Nix
 
-Build the pinned package with `nix build` or run it with `nix run . -- --version`. The flake exposes `packages.<system>.layerctl` and a default package for Linux and macOS on x86-64 and ARM64. The flake pins nixpkgs 26.05 because newer nixpkgs has dropped x86-64 macOS support. The package expression in `nix/package.nix` uses `buildGoModule` and accepts a `source` override, so it can be adapted for nixpkgs with a fixed upstream release and source hash.
+With Nix flakes enabled, run the published release without cloning this repository:
+
+```sh
+nix run github:NonLogicalDev/util.layerctl/v0.1.1 -- --version
+```
+
+Run layerctl commands from the Git repository containing your layer definitions. For example:
+
+```sh
+nix run github:NonLogicalDev/util.layerctl/v0.1.1 -- graph --format mermaid
+```
+
+The `v0.1.1` ref pins the release; omit it to run the default branch. From a layerctl checkout, use `nix run . -- --version` or `nix build` to build the package locally.
+
+The flake exposes `packages.<system>.layerctl` and a default package for Linux and macOS on x86-64 and ARM64. It pins nixpkgs 26.05 because newer nixpkgs has dropped x86-64 macOS support. The package expression in `nix/package.nix` uses `buildGoModule` and accepts a `source` override, so it can be adapted for nixpkgs with a fixed upstream release and source hash.
 
 ## Releases
 
