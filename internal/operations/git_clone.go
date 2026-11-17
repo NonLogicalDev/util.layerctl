@@ -106,7 +106,7 @@ func GitClone(ctx context.Context, workspace string, req GitCloneRequest) (resul
 	if want == "" {
 		want = "HEAD"
 	}
-	fetchArgs := []string{"-c", "protocol.file.allow=always", "fetch", "--no-tags"}
+	fetchArgs := []string{"-c", "protocol.file.allow=always", "fetch", "--no-recurse-submodules", "--no-tags"}
 	if req.Depth > 0 {
 		fetchArgs = append(fetchArgs, fmt.Sprintf("--depth=%d", req.Depth))
 	}
@@ -276,7 +276,7 @@ func GitClone(ctx context.Context, workspace string, req GitCloneRequest) (resul
 			resultErr = errors.Join(resultErr, fmt.Errorf("restore workspace shallow state: %w", err))
 		}
 	}()
-	fetchObjects := []string{"-c", "protocol.file.allow=always", "fetch", "--update-shallow", "--no-tags", "--no-write-fetch-head", "--", source, commit}
+	fetchObjects := []string{"-c", "protocol.file.allow=always", "fetch", "--no-recurse-submodules", "--update-shallow", "--no-tags", "--no-write-fetch-head", "--", source, commit}
 	if req.PreCheckoutPatch != "" || req.PreCheckoutScript != "" {
 		fetchObjects = append(fetchObjects, "refs/layerctl/prepared")
 	}
@@ -306,6 +306,14 @@ func GitClone(ctx context.Context, workspace string, req GitCloneRequest) (resul
 		if err := makeDirs(root, filepath.Dir(path), &createdDirs); err != nil {
 			rollback()
 			return "", err
+		}
+		if e.mode == "160000" {
+			if err := root.Mkdir(path, 0755); err != nil {
+				rollback()
+				return "", fmt.Errorf("create submodule directory %q: %w", path, err)
+			}
+			createdDirs = append(createdDirs, path)
+			continue
 		}
 		sourcePath := filepath.Join(staged, filepath.FromSlash(e.path))
 		if e.mode == "120000" {
@@ -517,6 +525,9 @@ func stageBlobs(ctx context.Context, source, staged string, entries []entry) err
 	}()
 	reader := bufio.NewReader(stdout)
 	for _, e := range entries {
+		if e.mode == "160000" {
+			continue
+		}
 		if _, err := io.WriteString(stdin, e.object+"\n"); err != nil {
 			return fmt.Errorf("request source blob %q: %w", e.path, err)
 		}
@@ -654,10 +665,9 @@ func parseTree(tree []byte) ([]entry, error) {
 			return nil, fmt.Errorf("invalid source tree entry %q", path)
 		}
 		mode, kind := fields[0], fields[1]
-		if mode == "160000" || kind == "commit" {
-			return nil, fmt.Errorf("git-clone source contains submodule %q", path)
-		}
-		if kind != "blob" || (mode != "100644" && mode != "100755" && mode != "120000") {
+		gitlink := mode == "160000" && kind == "commit"
+		blob := kind == "blob" && (mode == "100644" || mode == "100755" || mode == "120000")
+		if !gitlink && !blob {
 			return nil, fmt.Errorf("unsupported source tree entry %q", path)
 		}
 		entries = append(entries, entry{path: path, mode: mode, object: fields[2]})
