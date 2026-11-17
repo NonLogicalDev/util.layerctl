@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Import repositories containing Git submodules with their pins and original
   `.gitmodules` file. Submodules remain uninitialized.
+- Show usage and available flags with `layerctl --help` and `--help` on subcommands.
 
 ## [0.1.1] - 2026-11-17
 

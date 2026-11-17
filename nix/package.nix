@@ -13,7 +13,7 @@ buildGoModule (finalAttrs: {
   pname = "layerctl";
   version = "0.1.1";
   src = source;
-  vendorHash = "sha256-CVycV7wxo7nOHm7qjZKfJrIkNcIApUNzN1mSIIwQN0g=";
+  vendorHash = "sha256-OK7q/CQpa4gNWIPWHZPyew2Ym8NPkXqSDSzE92gYrKk=";
   ldflags = [ "-s" "-w" "-X main.version=${finalAttrs.version}" "-X main.commit=${revision}" ];
   subPackages = [ "cmd/layerctl" ];
   nativeBuildInputs = [ makeWrapper ];

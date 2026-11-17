@@ -1,147 +1,48 @@
 // Modified from abg-OAI/codex: module import path changed for this extraction.
-// Package cli parses layerctl commands and renders their results. Domain
-// packages own projection, layer, and upstream behavior.
+// Package cli parses layerctl commands and renders their results.
+// Domain packages own repository, projection, and layer operations.
 package cli
 
 import (
 	"context"
-	"errors"
-	"flag"
 	"fmt"
-	"io"
-	"os"
-	"strings"
+	"log"
 
-	"github.com/NonLogicalDev/util.layerctl/internal/definition"
-	"github.com/NonLogicalDev/util.layerctl/internal/gitrepo"
-	"github.com/NonLogicalDev/util.layerctl/internal/graph"
-	"github.com/NonLogicalDev/util.layerctl/internal/layer"
-	"github.com/NonLogicalDev/util.layerctl/internal/projection"
+	"github.com/alecthomas/kong"
 )
 
-// Run executes one layerctl invocation from the repository containing the
-// current directory.
-func Run(ctx context.Context, args []string, stdout, stderr io.Writer) error {
-	if len(args) == 0 {
-		return errors.New("usage: layerctl projection <create|list|path|continue|unlock|delete> ...")
-	}
-	workingDirectory, err := os.Getwd()
+// Run parses and executes one invocation. getwd and version are called only
+// when the selected command needs them.
+func Run(
+	ctx context.Context,
+	args []string,
+	logger *log.Logger,
+	getwd func() (string, error),
+	version func() string,
+	options ...kong.Option,
+) error {
+	parser, err := kong.New(new(rootCmd), append([]kong.Option{
+		kong.Name("layerctl"),
+		kong.Description("Compose Git repositories and changes as ordered layers."),
+		kong.BindTo(ctx, (*context.Context)(nil)),
+		kong.Bind(&repositoryLoader{Getwd: getwd, Log: logger}, versionProvider(version)),
+	}, options...)...)
 	if err != nil {
-		return fmt.Errorf("get working directory: %w", err)
+		return fmt.Errorf("construct CLI: %w", err)
 	}
-	git, err := gitrepo.Discover(ctx, workingDirectory)
-	if err != nil {
-		return fmt.Errorf("discover Git repository: %w", err)
-	}
-	canonical, err := definition.Load(git.Root)
-	if err != nil {
-		return fmt.Errorf("load canonical definition: %w", err)
-	}
-	if args[0] == "graph" {
-		flags := flag.NewFlagSet("graph", flag.ContinueOnError)
-		flags.SetOutput(stderr)
-		format := flags.String("format", "dot", "graph output format: dot or mermaid")
-		if err := flags.Parse(args[1:]); err != nil {
-			return err
-		}
-		if flags.NArg() != 0 {
-			return errors.New("usage: layerctl graph [--format dot|mermaid]")
-		}
-		return graph.Write(stdout, canonical.Layers, *format)
-	}
-	return runComposition(ctx, canonical, git, args, stdout, stderr)
-}
-
-func runLayer(ctx context.Context, service *layer.Service, args []string, stderr io.Writer) error {
-	if len(args) < 2 {
-		return errors.New("usage: layerctl layer <add|refresh> ...")
-	}
-	id := args[1]
-	flags := flag.NewFlagSet("layer "+args[0], flag.ContinueOnError)
-	flags.SetOutput(stderr)
-	from := flags.String("from", "", "capture from PROJECTION")
-	switch args[0] {
-	case "add":
-		if err := flags.Parse(args[2:]); err != nil {
-			return err
-		}
-		if flags.NArg() != 0 || *from == "" {
-			return errors.New("usage: layerctl layer add NNNN-LAYER-SLUG --from PROJECTION")
-		}
-		return service.Add(ctx, layer.AddRequest{ID: id, Projection: *from})
-	default:
-		return fmt.Errorf("unknown layer command %q", args[0])
-	}
-}
-
-type projectionRunner interface {
-	Create(context.Context, projection.CreateRequest) (projection.Projection, error)
-	List(context.Context) ([]projection.Projection, error)
-	Path(context.Context, string) (string, error)
-	Delete(context.Context, string) error
-}
-
-func runProjection(ctx context.Context, service projectionRunner, args []string, stdout, stderr io.Writer) error {
-	if len(args) == 0 {
-		return errors.New("usage: layerctl projection <create|list|path|continue|unlock|delete> ...")
-	}
-	switch args[0] {
-	case "create":
-		return runProjectionCreate(ctx, service, args[1:], stdout, stderr)
-	case "list":
-		if len(args) != 1 {
-			return errors.New("usage: layerctl projection list")
-		}
-		projections, err := service.List(ctx)
-		if err != nil {
-			return err
-		}
-		for _, item := range projections {
-			fmt.Fprintf(stdout, "%s\t%s\t%s\t%s\n", item.Name, item.Base, item.Head, item.WorktreePath)
-		}
-		return nil
-	case "path":
-		if len(args) != 2 {
-			return errors.New("usage: layerctl projection path NAME")
-		}
-		path, err := service.Path(ctx, args[1])
-		if err != nil {
-			return err
-		}
-		fmt.Fprintln(stdout, path)
-		return nil
-	case "delete":
-		if len(args) != 2 {
-			return errors.New("usage: layerctl projection delete NAME")
-		}
-		return service.Delete(ctx, args[1])
-	default:
-		return fmt.Errorf("unknown projection command %q", args[0])
-	}
-}
-
-func runProjectionCreate(ctx context.Context, service projectionRunner, args []string, stdout, stderr io.Writer) error {
-	if len(args) == 0 || strings.HasPrefix(args[0], "-") {
-		return errors.New("usage: layerctl projection create NAME [--worktree PATH] [--through LAYER]")
-	}
-	flags := flag.NewFlagSet("projection create", flag.ContinueOnError)
-	flags.SetOutput(stderr)
-	worktree := flags.String("worktree", "", "attach the projection at PATH")
-	through := flags.String("through", "", "stop after LAYER")
-	if err := flags.Parse(args[1:]); err != nil {
-		return err
-	}
-	if flags.NArg() != 0 {
-		return errors.New("usage: layerctl projection create NAME [--worktree PATH] [--through LAYER]")
-	}
-	created, err := service.Create(ctx, projection.CreateRequest{
-		Name:         args[0],
-		WorktreePath: *worktree,
-		Through:      *through,
-	})
+	parsed, err := parser.Parse(args)
 	if err != nil {
 		return err
 	}
-	fmt.Fprintln(stdout, created.WorktreePath)
-	return nil
+	return parsed.Run()
+}
+
+type rootCmd struct {
+	VersionFlag versionFlag `name:"version" help:"Print the version and source commit. Use without a command."`
+
+	Projection projectionCmd `cmd:"" help:"Manage projection workspaces."`
+	Layer      layerCmd      `cmd:"" help:"Capture changes as layers."`
+	Graph      graphCmd      `cmd:"" help:"Render the layer dependency graph."`
+	Check      checkCmd      `cmd:"" help:"Check that the definition composes successfully."`
+	Version    versionCmd    `cmd:"" help:"Print the version and source commit."`
 }
