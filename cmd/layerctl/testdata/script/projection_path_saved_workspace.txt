@@ -1,0 +1,17 @@
+# A new invocation can look up a projection's saved workspace by name.
+
+# Use a known workspace path so the lookup has an independent expectation.
+mkdir definition/layers
+mv give/layer definition/layers/0001-base
+cd definition
+git init -q -b main
+exec layerctl projection create demo --worktree $WORK/workspace
+
+exec layerctl projection path demo
+cmpenv stdout $WORK/want/path
+
+-- give/layer/layer.toml --
+[vcs]
+commit-msg = "Start projection"
+-- want/path --
+$WORK/workspace

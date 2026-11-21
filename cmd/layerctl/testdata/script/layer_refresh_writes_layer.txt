@@ -1,0 +1,51 @@
+# Refresh records a committed file edit in the layer on disk.
+
+# Use SHA-1 to match the expected patch, then install the starting overlay.
+env GIT_DEFAULT_HASH=sha1
+mkdir definition/layers
+mv give/layer definition/layers/0001-base
+cd definition
+git init -q -b main
+
+# Refresh captures committed changes, so commit the edit in the projection.
+exec layerctl projection create edit --through 0001-base --worktree $WORK/edit
+cp $WORK/give/edited.txt $WORK/edit/file.txt
+git -C $WORK/edit commit -qam 'Edit file'
+
+# The refreshed manifest keeps the overlay and appends a patch for the edit.
+exec layerctl layer refresh --from edit 0001-base
+cmp layers/0001-base/layer.toml $WORK/want/layer/layer.toml
+cmp layers/0001-base/refresh.patch $WORK/want/layer/refresh.patch
+
+-- give/layer/layer.toml --
+[vcs]
+commit-msg = "Add file"
+
+[[operation]]
+[operation.overlay]
+directory = "overlay"
+-- give/layer/overlay/file.txt --
+original
+-- give/edited.txt --
+edited
+-- want/layer/layer.toml --
+[vcs]
+commit-msg = """
+Edit file
+"""
+
+[[operation]]
+[operation.overlay]
+directory = "overlay"
+
+[[operation]]
+[operation.patch]
+file = "refresh.patch"
+-- want/layer/refresh.patch --
+diff --git a/file.txt b/file.txt
+index 4b48deed3a433909bfd6b6ab3d4b91348b6af464..7663aa741bec2b1328630882586fb7a2cbc8a255 100644
+--- a/file.txt
++++ b/file.txt
+@@ -1 +1 @@
+-original
++edited
