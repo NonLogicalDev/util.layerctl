@@ -1,0 +1,54 @@
+# A fresh invocation resumes a projection by name and commits the resolution.
+
+# Keep the base commit for Git's three-way apply. Both upstream and
+# feature.patch replace the same line from that commit.
+env GIT_DEFAULT_HASH=sha1
+git -C give/repo init -q -b main
+git -C give/repo add file.txt
+git -C give/repo commit -qm base
+cp give/upstream.txt give/repo/file.txt
+git -C give/repo commit -qam upstream
+
+# Install the layer and point its clone operation at this run's source repo.
+mkdir definition/layers
+mv give/layer definition/layers/0001-feature
+cd definition
+git init -q -b main
+exec sed 's|@WORK@|'$WORK'|g' layers/0001-feature/layer.toml
+cp stdout layers/0001-feature/layer.toml
+
+# Creation stops at the conflict and reports how to resume the projection.
+! exec layerctl projection create demo --worktree $WORK/workspace
+stderr 'resolve it then run layerctl projection continue demo$'
+
+# Resolve the file in the stopped workspace and check the commit from continue.
+cp $WORK/give/resolved.txt $WORK/workspace/file.txt
+exec layerctl projection continue demo
+git -C $WORK/workspace show HEAD:file.txt
+cmp stdout $WORK/give/resolved.txt
+
+-- give/repo/file.txt --
+base
+-- give/layer/layer.toml --
+[vcs]
+commit-msg = "Apply feature"
+
+[[operation]]
+[operation.git-clone]
+url = "@WORK@/give/repo"
+
+[[operation]]
+[operation.patch]
+file = "feature.patch"
+-- give/layer/feature.patch --
+diff --git a/file.txt b/file.txt
+index df967b96a579e45a18b8251732d16804b2e56a55..a7453f07505c42ea8d6fdda75fa91710c81c53d6 100644
+--- a/file.txt
++++ b/file.txt
+@@ -1 +1 @@
+-base
++feature
+-- give/upstream.txt --
+upstream
+-- give/resolved.txt --
+resolved

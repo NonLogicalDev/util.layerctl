@@ -1,0 +1,24 @@
+# Check reports which layer failed during composition.
+
+# Make the script executable so the failure comes from running the operation.
+mkdir definition/layers
+mv give/layer definition/layers/0001-fail
+cd definition
+git init -q -b main
+chmod 0755 layers/0001-fail/fail.sh
+
+! exec layerctl check
+stderr '0001-fail'
+stderr 'fail\.sh'
+
+-- give/layer/layer.toml --
+[vcs]
+commit-msg = "Fail the check"
+
+[[operation]]
+[operation.script]
+file = "fail.sh"
+-- give/layer/fail.sh --
+#!/bin/sh
+printf '%s: intentional failure\n' "${0##*/}" >&2
+exit 23

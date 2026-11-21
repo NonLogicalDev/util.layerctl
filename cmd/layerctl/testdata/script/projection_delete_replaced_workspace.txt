@@ -1,0 +1,22 @@
+# Deleting a projection refuses to remove a directory that replaced its workspace.
+
+mkdir definition/layers
+mv give/layer definition/layers/0001-base
+cd definition
+git init -q -b main
+exec layerctl projection create demo --worktree $WORK/workspace
+
+# The recorded path now points to another directory with a file to preserve.
+mv $WORK/workspace $WORK/original-workspace
+mkdir $WORK/workspace
+cp $WORK/give/keep.txt $WORK/workspace/keep.txt
+
+! exec layerctl projection delete demo
+stderr '^layerctl: refuse to delete composition "demo": '
+cmp $WORK/workspace/keep.txt $WORK/give/keep.txt
+
+-- give/layer/layer.toml --
+[vcs]
+commit-msg = "Start projection"
+-- give/keep.txt --
+Unrelated file
